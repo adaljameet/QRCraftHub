@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Generator</title>
+  <style>
+    :root {
+      --bg-light: #f0f2f5;
+      --bg-dark: #121212;
+      --card-light: #ffffff;
+      --card-dark: #1e1e1e;
+      --text-light: #333;
+      --text-dark: #f1f1f1;
+      --primary: #007bff;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      background: var(--bg-light);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    header {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .dark-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      border-radius: 24px;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.slider {
+      background-color: #444;
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(22px);
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: var(--card-light);
+      color: var(--text-light);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    body.dark-mode .card {
+      background: var(--card-dark);
+      color: var(--text-dark);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05);
+    }
+
+    .card input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card button {
+      padding: 12px 24px;
+      background-color: var(--primary);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .card button:hover {
+      background-color: #0056b3;
+    }
+
+    #qrcode {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <span>QR Code Generator</span>
+    <div class="dark-toggle">
+      <label class="switch">
+        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="card">
+      <input type="text" id="qrInput" placeholder="Enter text or URL..." />
+      <div>
+        <button onclick="generateQRCode()">Generate</button>
+        <button onclick="downloadQRCode()">Download</button>
+      </div>
+      <div id="qrcode"></div>
+    </div>
+  </div>
+  <footer>© 2025 QR Tool by You | Built with HTML, CSS & JavaScript</footer>
+
+  <!-- QRCode.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    let qr;
+
+    function generateQRCode() {
+      const input = document.getElementById("qrInput").value.trim();
+      const qrDiv = document.getElementById("qrcode");
+      qrDiv.innerHTML = "";
+
+      if (!input) {
+        alert("Please enter text or URL.");
+        return;
+      }
+
+      qr = new QRCode(qrDiv, {
+        text: input,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H,
+      });
+    }
+
+    function downloadQRCode() {
+      const qrImg = document.querySelector("#qrcode img");
+      if (!qrImg) {
+        alert("Please generate a QR Code first.");
+        return;
+      }
+
+      const link = document.createElement("a");
+      link.href = qrImg.src;
+      link.download = "qrcode.png";
+      link.click();
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+  </script>
+</body>
+
+</html>
